@@ -6,11 +6,11 @@
           state=present
 
       - include_vars: users.yml
-      - name: Add Unix Admins users
+      - name: Add newly created users to users group and wheel groups.
         user: name={{ item.username }} group=users groups=wheel
         with_items: "{{ users }}"
 
-      - name: Allow wheel group to have passwordless sudo
+      - name: Allow wheel group to have password sudo
         lineinfile:
           dest: /etc/sudoers
           state: present
