@@ -1,0 +1,32 @@
+---
+
+      - name: Make sure we have a 'wheel' group
+        group:
+          name=wheel
+          state=present
+
+      - include_vars: users.yml
+      - name: Add Unix Admins users
+        user: name={{ item.username }} group=users groups=wheel
+        with_items: "{{ users }}"
+
+      - name: Allow wheel group to have passwordless sudo
+        lineinfile:
+          dest: /etc/sudoers
+          state: present
+          regexp: '^%wheel'
+          line: '%wheel ALL=(ALL:ALL) ALL'
+
+
+      - include_vars: users.yml
+      - include_vars: credentials.yml
+      - name: Add sudoers users to wheel group
+        user: name={{ item.username }} groups=wheel append=no state=present createhome=no password={{ password }}
+        with_items: "{{ users }}"
+
+      - include_vars: users.yml
+      - name: Force reset user password during login.
+        command: "chage -d 0 {{ item.username }}"
+        with_items: "{{ users }}"
+
+

@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  remote_user: root
+  become: no
+
+  roles:
+    - usercreation
+
+
